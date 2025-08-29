@@ -9,6 +9,9 @@
   # '';
 
   home.packages = with pkgs; [
+    qemu
+    python313
+
     neofetch nnn
     zip unzip xz  # archives
 

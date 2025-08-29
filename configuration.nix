@@ -42,4 +42,7 @@
     vim git gh wget
     gcc ghc cabal-install
   ];
+
+  # Cross compilation
+  boot.binfmt.emulatedSystems = [ "mipsel-linux" "riscv64-linux" ];
 }
