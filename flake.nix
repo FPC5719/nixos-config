@@ -51,8 +51,8 @@
           };
         in pkgs.symlinkJoin {
           name = "riscv-toolchain";
-          paths = with pkgs-rv.pkgsCross.riscv64.buildPackages; [
-            stdenv.cc binutils gcc
+          paths = with pkgs-rv.pkgsCross.riscv64; [
+            pkgs-rv.stdenv.cc binutils gcc
           ];
         };
     };
