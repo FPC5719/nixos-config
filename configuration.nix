@@ -15,6 +15,7 @@
 
   wsl.enable = true;
   wsl.defaultUser = "nixos";
+  wsl.interop.register = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -24,9 +25,12 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-  nix.settings.substituters = [ "https://mirrors.ustc.edu.cn/nix-channels/store" ];
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings = {
+    substituters = [ "https://mirrors.ustc.edu.cn/nix-channels/store" ];
+    builders-use-substitutes = true;
+    experimental-features = [ "nix-command" "flakes" ];
+    auto-optimise-store = true;
+  };
 
   # Optimize Storage
   nix.gc = {
@@ -34,15 +38,16 @@
     dates = "weekly";
     options = "--delete-older-than 1w";
   };
-  nix.settings.auto-optimise-store = true;
 
-  environment.systemPackages = with pkgs; [
-    fish
-    emacs
-    vim git gh wget
-    gcc ghc cabal-install
-  ];
+  environment.systemPackages =
+    with pkgs; [
+      stdenv.cc binutils gcc
+      fish emacs
+      vim git gh wget
+      ghc cabal-install
+    ];
+
 
   # Cross compilation
-  boot.binfmt.emulatedSystems = [ "mipsel-linux" "riscv64-linux" ];
+  boot.binfmt.emulatedSystems = [ "riscv64-linux" ];
 }

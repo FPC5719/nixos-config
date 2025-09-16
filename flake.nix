@@ -14,21 +14,48 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+    let
       system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
+    in {
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        inherit system;
+        
+        modules = [
+          ./configuration.nix
 
-        home-manager.nixosModules.home-manager {
-          home-manager.useGlobalPkgs    = true;
-          home-manager.useUserPackages  = true;
-          home-manager.users.nixos      = import ./home.nix;
-          home-manager.extraSpecialArgs = inputs;
-        }
-      ];
+          home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs    = true;
+            home-manager.useUserPackages  = true;
+            home-manager.users.nixos      = import ./home.nix;
+            home-manager.extraSpecialArgs = inputs;
+          }
+
+          {
+            environment.systemPackages = [
+              self.packages.${system}.riscv-toolchain
+            ];
+          }
+        ];
+      };
+
+      packages.${system}.riscv-toolchain = 
+        let
+          pkgs = import nixpkgs { inherit system; };
+          pkgs-rv = import nixpkgs {
+            inherit system;
+            crossSystem = {
+              config = "riscv64-linux-gnu";
+              gcc.abi = "ilp32";
+            };
+          };
+        in pkgs.symlinkJoin {
+          name = "riscv-toolchain";
+          paths = with pkgs-rv.pkgsCross.riscv64.buildPackages; [
+            stdenv.cc binutils gcc
+          ];
+        };
     };
-  };
 
   nixConfig = {
     extra-substituters = "https://mirrors.ustc.edu.cn/nix-channels/store";
