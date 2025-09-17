@@ -17,6 +17,7 @@
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
     in {
       nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
         inherit system;
@@ -32,29 +33,43 @@
           }
 
           {
-            environment.systemPackages = [
-              self.packages.${system}.riscv-toolchain
-            ];
+            environment.systemPackages =
+              (with pkgs; [
+                stdenv.cc binutils gcc gnumake
+                fish emacs
+                vim git gh wget
+                ghc cabal-install
+              ]) ++
+              (with self.packages.${system}; [
+                riscv-toolchain-ilp32
+                riscv-toolchain-lp64d
+              ]);
           }
         ];
       };
 
-      packages.${system}.riscv-toolchain = 
-        let
-          pkgs = import nixpkgs { inherit system; };
-          pkgs-rv = import nixpkgs {
-            inherit system;
-            crossSystem = {
-              config = "riscv64-linux-gnu";
-              gcc.abi = "ilp32";
+      packages.${system} = {
+        riscv-toolchain-ilp32 =
+          let
+            pkgs-rv = import nixpkgs {
+              inherit system;
+              crossSystem = {
+                config = "riscv64-linux-gnu";
+                gcc.abi = "ilp32";
+              };
             };
+          in pkgs.symlinkJoin {
+            name = "riscv-toolchain-ilp32";
+            paths = [ pkgs-rv.stdenv.cc ];
           };
-        in pkgs.symlinkJoin {
-          name = "riscv-toolchain";
-          paths = with pkgs-rv.pkgsCross.riscv64; [
-            pkgs-rv.stdenv.cc binutils gcc
-          ];
-        };
+        riscv-toolchain-lp64d =
+          pkgs.symlinkJoin {
+            name = "riscv-toolchain-lp64d";
+            paths = with pkgs.pkgsCross.riscv64; [
+              stdenv.cc gdb
+            ];
+          };
+      };
     };
 
   nixConfig = {

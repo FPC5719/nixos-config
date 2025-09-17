@@ -71,15 +71,6 @@
 
   programs.ccache.enable = true;
 
-  environment.systemPackages =
-    with pkgs; [
-      stdenv.cc binutils gcc
-      fish emacs
-      vim git gh wget
-      ghc cabal-install
-    ];
-
-
   # Cross compilation
   boot.binfmt.emulatedSystems = [ "riscv64-linux" ];
 }
