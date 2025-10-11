@@ -10,7 +10,9 @@
 
   home.packages = with pkgs; [
     qemu
-    python313
+    # python312
+    # python312Packages.distutils
+    python3Full
 
     neofetch nnn
     zip unzip xz  # archives
@@ -24,6 +26,7 @@
     nix-output-monitor
 
     htop
+    minicom ninja
   ];
 
   programs.git = {

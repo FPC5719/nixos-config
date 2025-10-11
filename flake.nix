@@ -39,6 +39,7 @@
                 fish emacs
                 vim git gh wget
                 ghc cabal-install
+                kmod
               ]) ++
               (with self.packages.${system}; [
                 riscv-toolchain-ilp32
@@ -66,7 +67,7 @@
           pkgs.symlinkJoin {
             name = "riscv-toolchain-lp64d";
             paths = with pkgs.pkgsCross.riscv64; [
-              stdenv.cc gdb
+              stdenv.cc gdb opensbi
             ];
           };
       };

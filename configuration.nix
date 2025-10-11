@@ -26,11 +26,18 @@
   system.stateVersion = "24.11"; # Did you read the comment?
 
   nix.settings = {
-    substituters = [ "https://mirrors.ustc.edu.cn/nix-channels/store" ];
+    substituters = [
+      "https://mirrors.ustc.edu.cn/nix-channels/store"
+      "https://clash-lang.cachix.org"
+    ];
+    trusted-public-keys = [
+      "clash-lang.cachix.org-1:/2N1uka38B/heaOAC+Ztd/EWLmF0RLfizWgC5tamCBg="
+    ];
     builders-use-substitutes = true;
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     extra-sandbox-paths = [ config.programs.ccache.cacheDir ];
+    max-jobs = 2;
   };
 
   # Optimize Storage
