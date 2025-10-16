@@ -10,9 +10,8 @@
 
   home.packages = with pkgs; [
     qemu
-    # python312
-    # python312Packages.distutils
     python3Full
+    texliveBasic mpage ghostscript
 
     neofetch nnn
     zip unzip xz  # archives
@@ -41,7 +40,7 @@
     bashrcExtra      = ''
     '';
     shellAliases     = {
-      em = "emacs -nw";
+      em = "emacsclient -nw";
     };
   };
 

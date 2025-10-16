@@ -78,6 +78,11 @@
 
   programs.ccache.enable = true;
 
+  services.emacs = {
+    enable = true;
+    package = pkgs.emacs;
+  };
+
   # Cross compilation
   boot.binfmt.emulatedSystems = [ "riscv64-linux" ];
 }

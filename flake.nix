@@ -36,6 +36,8 @@
             environment.systemPackages =
               (with pkgs; [
                 stdenv.cc binutils gcc gnumake
+                llvmPackages_18.libllvm
+                llvmPackages_18.clang-unwrapped
                 fish emacs
                 vim git gh wget
                 ghc cabal-install
