@@ -84,5 +84,5 @@
   };
 
   # Cross compilation
-  boot.binfmt.emulatedSystems = [ "riscv64-linux" ];
+  boot.binfmt.emulatedSystems = [ "riscv64-linux" "loongarch64-linux" ];
 }

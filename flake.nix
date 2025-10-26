@@ -34,24 +34,25 @@
 
           {
             environment.systemPackages =
+              (with self.packages.${system}; [
+                riscv-toolchain-ilp32
+                riscv-toolchain-lp64d
+                loongarch-toolchain
+              ]) ++
               (with pkgs; [
-                stdenv.cc binutils gcc gnumake
+                stdenv.cc binutils gcc gdb gnumake
                 llvmPackages_18.libllvm
                 llvmPackages_18.clang-unwrapped
                 fish emacs
                 vim git gh wget
                 ghc cabal-install
                 kmod
-              ]) ++
-              (with self.packages.${system}; [
-                riscv-toolchain-ilp32
-                riscv-toolchain-lp64d
               ]);
           }
         ];
       };
 
-      packages.${system} = {
+      packages.${system} = rec {
         riscv-toolchain-ilp32 =
           let
             pkgs-rv = import nixpkgs {
@@ -65,11 +66,29 @@
             name = "riscv-toolchain-ilp32";
             paths = [ pkgs-rv.stdenv.cc ];
           };
+        # Host gdb is gdb-multiarch, no need to contain arch-spesific gdb
+        gdb-rv = pkgs.runCommand "riscv64-gdb" {} ''
+          mkdir -p $out/bin
+          ln -s ${pkgs.pkgsCross.riscv64.gdb}/bin/gdb \
+            $out/bin/riscv64-unknown-linux-gnu-gdb
+        '';
         riscv-toolchain-lp64d =
           pkgs.symlinkJoin {
             name = "riscv-toolchain-lp64d";
             paths = with pkgs.pkgsCross.riscv64; [
-              stdenv.cc gdb opensbi
+              stdenv.cc opensbi # gdb-rv
+            ];
+          };
+        gdb-la = pkgs.runCommand "loongarch64-gdb" {} ''
+          mkdir -p $out/bin
+          ln -s ${pkgs.pkgsCross.loongarch64-linux.gdb}/bin/gdb \
+            $out/bin/loongarch64-unknown-linux-gnu-gdb
+        '';
+        loongarch-toolchain =
+          pkgs.symlinkJoin {
+            name = "loongarch-toolchain";
+            paths = with pkgs.pkgsCross.loongarch64-linux; [
+              stdenv.cc # gdb-la
             ];
           };
       };

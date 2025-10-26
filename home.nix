@@ -12,6 +12,7 @@
     qemu
     python3Full
     texliveBasic mpage ghostscript
+    bear
 
     neofetch nnn
     zip unzip xz  # archives
@@ -40,7 +41,7 @@
     bashrcExtra      = ''
     '';
     shellAliases     = {
-      em = "emacsclient -nw";
+      em = "emacsclient -nw `pwd`";
     };
   };
 
