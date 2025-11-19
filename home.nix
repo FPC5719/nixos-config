@@ -8,26 +8,35 @@
   #     xxx
   # '';
 
-  home.packages = with pkgs; [
-    qemu
-    python3Full
-    texliveBasic mpage ghostscript
-    bear
+  home.packages =
+    let
+      myTex = (pkgs.texlive.combine {
+        inherit (pkgs.texlive) scheme-medium
+          ctex amsmath amsfonts graphics tools pgf
+          mdframed zref needspace multirow fontsize
+          wrapfig circuitikz cleveref adjustbox;
+      });
+    in with pkgs; [
+      qemu
+      python3Full
+      myTex mpage ghostscript
+      bear
+      cloc
 
-    neofetch nnn
-    zip unzip xz  # archives
+      neofetch nnn
+      zip unzip xz  # archives
 
-    file which tree
-    gnused gnutar gawk zstd gnupg
+      file which tree
+      gnused gnutar gawk zstd gnupg
 
-    # nix related
-    # it provides the command `nom` works just like `nix`
-    # with more details log output
-    nix-output-monitor
+      # nix related
+      # it provides the command `nom` works just like `nix`
+      # with more details log output
+      nix-output-monitor
 
-    htop
-    minicom ninja
-  ];
+      htop
+      minicom ninja
+    ];
 
   programs.git = {
     enable     = true;
@@ -39,6 +48,7 @@
     enable           = true;
     enableCompletion = true;
     bashrcExtra      = ''
+    eval "$(direnv hook bash)"
     '';
     shellAliases     = {
       em = "emacsclient -nw `pwd`";

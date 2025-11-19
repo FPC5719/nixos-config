@@ -28,13 +28,9 @@
   nix.settings = {
     substituters = [
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://clash-lang.cachix.org"
-    ];
-    trusted-public-keys = [
-      "clash-lang.cachix.org-1:/2N1uka38B/heaOAC+Ztd/EWLmF0RLfizWgC5tamCBg="
     ];
     builders-use-substitutes = true;
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [ "nix-command" "flakes" "pipe-operators"];
     auto-optimise-store = true;
     extra-sandbox-paths = [ config.programs.ccache.cacheDir ];
     max-jobs = 2;
@@ -77,10 +73,28 @@
   ];
 
   programs.ccache.enable = true;
+  programs.direnv.enable = true;
 
   services.emacs = {
     enable = true;
     package = pkgs.emacs;
+  };
+
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      source-han-sans
+      source-han-serif
+      source-han-mono
+    ];
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        sansSerif = [ "Source Han Sans SC" ];
+        serif     = [ "Source Han Serif SC" ];
+        monospace = [ "Source Han Mono SC" ];
+      };
+    };
   };
 
   # Cross compilation

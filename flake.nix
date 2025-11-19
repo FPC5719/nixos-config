@@ -41,8 +41,7 @@
               ]) ++
               (with pkgs; [
                 stdenv.cc binutils gcc gdb gnumake
-                llvmPackages_18.libllvm
-                llvmPackages_18.clang-unwrapped
+                (hiPrio clang-tools) clang
                 fish emacs
                 vim git gh wget
                 ghc cabal-install
@@ -79,6 +78,7 @@
               stdenv.cc opensbi # gdb-rv
             ];
           };
+        # However, default backend for Loongarch in gdb seems to not work
         gdb-la = pkgs.runCommand "loongarch64-gdb" {} ''
           mkdir -p $out/bin
           ln -s ${pkgs.pkgsCross.loongarch64-linux.gdb}/bin/gdb \
@@ -88,7 +88,7 @@
           pkgs.symlinkJoin {
             name = "loongarch-toolchain";
             paths = with pkgs.pkgsCross.loongarch64-linux; [
-              stdenv.cc # gdb-la
+              stdenv.cc gdb-la
             ];
           };
       };
