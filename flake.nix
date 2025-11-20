@@ -42,7 +42,7 @@
               (with pkgs; [
                 stdenv.cc binutils gcc gdb gnumake
                 (hiPrio clang-tools) clang
-                fish emacs
+                fish emacs xclip
                 vim git gh wget
                 ghc cabal-install
                 kmod
