@@ -23,6 +23,8 @@
       bear
       cloc
 
+      crawl
+
       neofetch nnn
       zip unzip xz  # archives
 
