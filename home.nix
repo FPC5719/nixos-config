@@ -18,7 +18,7 @@
       });
     in with pkgs; [
       qemu
-      python3Full
+      # python3Full
       myTex mpage ghostscript
       bear
       cloc
@@ -41,9 +41,11 @@
     ];
 
   programs.git = {
-    enable     = true;
-    userName   = "FPC5719";
-    userEmail  = "fpc5719@163.com";
+    enable        = true;
+    settings.user = {
+      name  = "FPC5719";
+      email = "fpc5719@163.com";
+    };
   };
 
   programs.bash = {

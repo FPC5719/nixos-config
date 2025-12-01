@@ -41,7 +41,7 @@
               ]) ++
               (with pkgs; [
                 stdenv.cc binutils gcc gdb gnumake
-                (hiPrio clang-tools) clang
+                (lib.hiPrio clang-tools) clang
                 fish emacs xclip
                 vim git gh wget
                 ghc cabal-install
