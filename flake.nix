@@ -40,11 +40,10 @@
                 loongarch-toolchain
               ]) ++
               (with pkgs; [
+                busybox net-tools
                 stdenv.cc binutils gcc gdb gnumake
-                (lib.hiPrio clang-tools) clang
-                fish emacs xclip
                 vim git gh wget
-                ghc cabal-install
+                emacs xclip
                 kmod
               ]);
           }

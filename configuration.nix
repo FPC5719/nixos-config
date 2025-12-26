@@ -80,6 +80,15 @@
     package = pkgs.emacs;
   };
 
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = [ "mydatabase" "course" ];
+    authentication = pkgs.lib.mkOverride 10 ''
+      #type database  DBuser  auth-method
+      local all       all     trust
+    '';
+  };
+
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [

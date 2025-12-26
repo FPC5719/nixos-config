@@ -16,28 +16,31 @@
           mdframed zref needspace multirow fontsize
           wrapfig circuitikz cleveref adjustbox;
       });
+      myPython = (pkgs.python3.withPackages (python-pkgs: [
+        # No pkgs
+      ]));
     in with pkgs; [
-      qemu
-      # python3Full
+      # Compiler
+      (lib.hiPrio clang-tools) clang
+      ghc cabal-install haskellPackages.hasktags
+      myPython
+      koka
+      verilator iverilog
+      # Dev Environment
+      qemu ninja bear cloc
+      # Tex related
       myTex mpage ghostscript
-      bear
-      cloc
-
-      crawl
-
-      neofetch nnn
-      zip unzip xz  # archives
-
+      # Utils
+      fish neofetch nnn htop
+      zip unzip xz
       file which tree
       gnused gnutar gawk zstd gnupg
+      minicom
 
       # nix related
       # it provides the command `nom` works just like `nix`
       # with more details log output
       nix-output-monitor
-
-      htop
-      minicom ninja
     ];
 
   programs.git = {
@@ -56,6 +59,16 @@
     '';
     shellAliases     = {
       em = "emacsclient -nw `pwd`";
+    };
+  };
+
+  programs.fish = {
+    enable = true;
+    shellInit = ''
+    direnv hook fish | source
+    '';
+    shellAliases = {
+      em = "emacsclient -nw $PWD";
     };
   };
 
