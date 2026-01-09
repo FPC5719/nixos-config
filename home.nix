@@ -21,7 +21,6 @@
       ]));
     in with pkgs; [
       # Compiler
-      (lib.hiPrio clang-tools) clang
       ghc cabal-install haskellPackages.hasktags
       myPython
       koka

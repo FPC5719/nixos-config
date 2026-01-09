@@ -34,17 +34,25 @@
 
           {
             environment.systemPackages =
+              (with pkgs; [
+                stdenv.cc binutils gcc gdb gnumake
+              ]) ++
               (with self.packages.${system}; [
                 riscv-toolchain-ilp32
                 riscv-toolchain-lp64d
                 loongarch-toolchain
+                # clang-toolchain
               ]) ++
               (with pkgs; [
-                busybox net-tools
-                stdenv.cc binutils gcc gdb gnumake
+                busybox net-tools kmod
                 vim git gh wget
                 emacs xclip
-                kmod
+
+                llvmPackages.libllvm
+                llvmPackages.libcxx
+                llvmPackages.clang
+                clang-tools
+                clang
               ]);
           }
         ];
@@ -65,11 +73,13 @@
             paths = [ pkgs-rv.stdenv.cc ];
           };
         # Host gdb is gdb-multiarch, no need to contain arch-spesific gdb
+        /*
         gdb-rv = pkgs.runCommand "riscv64-gdb" {} ''
           mkdir -p $out/bin
           ln -s ${pkgs.pkgsCross.riscv64.gdb}/bin/gdb \
             $out/bin/riscv64-unknown-linux-gnu-gdb
         '';
+        */
         riscv-toolchain-lp64d =
           pkgs.symlinkJoin {
             name = "riscv-toolchain-lp64d";
@@ -90,6 +100,27 @@
               stdenv.cc gdb-la
             ];
           };
+
+        # Override the `clangd` in `pkgs.clang` with the one in `pkgs.clang-tools`
+        clang-toolchain = pkgs.runCommand "clang-toolchain" {} ''
+          mkdir -p $out/bin
+          for file in ${pkgs.llvmPackages_20.clang-tools}/bin/*; do
+            name=$(basename "$file")
+            ln -s "$file" "$out/bin/$name"
+          done
+          for file in ${pkgs.clang_20}/bin/*; do
+            name=$(basename "$file")
+            if [ ! -e "$out/bin/$name" ]; then
+              ln -s "$file" "$out/bin/$name"
+            fi
+          done
+          for dir in ${pkgs.clang_20}/*; do
+            name=$(basename "$dir")
+            if [[ -d $dir && $name != "bin" ]]; then
+              ln -sT "$dir" "$out/$name"
+            fi
+          done
+        '';
       };
     };
 
