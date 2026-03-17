@@ -82,7 +82,6 @@
       warn_timeout = "0";
     };
   };
-  
 
   programs.nix-ld.enable = true;
 
@@ -114,7 +113,6 @@
 
   users.users.nixos = {
     openssh.authorizedKeys.keys = [
-      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC4NWAGfZf4OMNgGGs8cI4e+Q6dMFXMPAk2EXfkXWvcRM+OC0rp7ms4xyxp6oSEGh5pnfvZ/qP6lbX98lSXUW0DB/T9uiDx/wLC7QSrZ50KySfa4bzB9ifXwVbyV3RQVXAfCm/gjh39Lt5R3VJj0gfv/izNFhhpDMfb884q43Dk21d0ponXGNARODJoi14eNRiEhNSEsfCfrLxepiKooy9xJVOkOW+6Fbw6RJ41zOaGYgA740pJThdK0buioyqeo6YPemUExRWS8D7+v7A3ue1RULu+LQJkvGq3DFy5RWYZizrElKXymj4yFQrwgpVtIl2LQo4lrEvwvwGX01Tu0RdVrDY6eB9dzo4m6dU9F9u5ctbZPheDVLlDQUS+Wzhik2LsC2iGZZkw/D6gHuhnXjCUvMcBoF/gmlLSgoZcdmZJdi3pJDD45FNCkPxWrz5X370b7rN2qo2soP2VF6ky12/+c/YfTW9wE4fLDEcM0IrU3GvGckuH+Joza4TSXfrX51E= admin@DESKTOP-243H73S"
     ];
   };
 
@@ -138,6 +136,8 @@
       };
     };
   };
+
+  time.timeZone = "Asia/Shanghai";
 
   # Cross compilation
   boot.binfmt.emulatedSystems = [ "riscv64-linux" "loongarch64-linux" ];

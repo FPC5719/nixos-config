@@ -19,18 +19,20 @@
       myPython = (pkgs.python3.withPackages (python-pkgs: [
         # No pkgs
       ]));
-    in with pkgs; [
+    in ( with pkgs.haskell.packages.ghc910; [
+      ghc cabal-install hasktags haskell-language-server
+    ]) ++ ( with pkgs; [
       # Compiler
-      ghc cabal-install haskellPackages.hasktags
-      myPython
+      myPython uv
       koka
       verilator iverilog
+      nodejs
       # Dev Environment
       qemu ninja bear cloc
       # Tex related
       myTex mpage ghostscript
       # Utils
-      fish neofetch nnn htop
+      fish neofetch nnn htop tmux
       zip unzip xz
       file which tree
       gnused gnutar gawk zstd gnupg
@@ -40,7 +42,7 @@
       # it provides the command `nom` works just like `nix`
       # with more details log output
       nix-output-monitor
-    ];
+    ]);
 
   programs.git = {
     enable        = true;
@@ -69,6 +71,22 @@
     shellAliases = {
       em = "emacsclient -nw $PWD";
     };
+  };
+
+  programs.tmux = {
+    enable       = true;
+    shell        = "${pkgs.fish}/bin/fish";
+    shortcut     = "q";
+    secureSocket = false;
+    mouse        = true;
+    clock24      = true;
+    escapeTime   = 0;
+    extraConfig  = ''
+    set -g default-terminal "xterm-256color"
+    bind f split-window -h
+    bind v split-window -v
+    bind o select-pane -t :.+
+    '';
   };
 
   # This value determines the Home Manager release that your
