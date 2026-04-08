@@ -41,12 +41,10 @@
                 riscv-toolchain-ilp32
                 riscv-toolchain-lp64d
                 loongarch-toolchain
-                # clang-toolchain
               ]) ++
               (with pkgs; [
                 busybox net-tools kmod
                 vim git gh wget
-                emacs xclip
 
                 llvmPackages.libllvm
                 llvmPackages.libcxx
@@ -72,14 +70,6 @@
             name = "riscv-toolchain-ilp32";
             paths = [ pkgs-rv.stdenv.cc ];
           };
-        # Host gdb is gdb-multiarch, no need to contain arch-spesific gdb
-        /*
-        gdb-rv = pkgs.runCommand "riscv64-gdb" {} ''
-          mkdir -p $out/bin
-          ln -s ${pkgs.pkgsCross.riscv64.gdb}/bin/gdb \
-            $out/bin/riscv64-unknown-linux-gnu-gdb
-        '';
-        */
         riscv-toolchain-lp64d =
           pkgs.symlinkJoin {
             name = "riscv-toolchain-lp64d";
@@ -87,12 +77,6 @@
               stdenv.cc opensbi # gdb-rv
             ];
           };
-        # However, default backend for Loongarch in gdb seems to not work
-        gdb-la = pkgs.runCommand "loongarch64-gdb" {} ''
-          mkdir -p $out/bin
-          ln -s ${pkgs.pkgsCross.loongarch64-linux.gdb}/bin/gdb \
-            $out/bin/loongarch64-unknown-linux-gnu-gdb
-        '';
         loongarch-toolchain =
           pkgs.symlinkJoin {
             name = "loongarch-toolchain";
@@ -100,26 +84,12 @@
               stdenv.cc gdb-la
             ];
           };
-
-        # Override the `clangd` in `pkgs.clang` with the one in `pkgs.clang-tools`
-        clang-toolchain = pkgs.runCommand "clang-toolchain" {} ''
+        # Host gdb is gdb-multiarch, no need to contain arch-spesific gdb
+        # However, default backend for Loongarch in gdb-multiarch seems to malfunction
+        gdb-la = pkgs.runCommand "loongarch64-gdb" {} ''
           mkdir -p $out/bin
-          for file in ${pkgs.llvmPackages_20.clang-tools}/bin/*; do
-            name=$(basename "$file")
-            ln -s "$file" "$out/bin/$name"
-          done
-          for file in ${pkgs.clang_20}/bin/*; do
-            name=$(basename "$file")
-            if [ ! -e "$out/bin/$name" ]; then
-              ln -s "$file" "$out/bin/$name"
-            fi
-          done
-          for dir in ${pkgs.clang_20}/*; do
-            name=$(basename "$dir")
-            if [[ -d $dir && $name != "bin" ]]; then
-              ln -sT "$dir" "$out/$name"
-            fi
-          done
+          ln -s ${pkgs.pkgsCross.loongarch64-linux.gdb}/bin/gdb \
+            $out/bin/loongarch64-unknown-linux-gnu-gdb
         '';
       };
     };

@@ -15,18 +15,6 @@
     (fetchTarball "https://github.com/nix-community/nixos-vscode-server/tarball/master")
   ];
 
-  wsl.enable = true;
-  wsl.defaultUser = "nixos";
-  wsl.interop.register = true;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
-
   nix.settings = {
     substituters = [
       "https://mirrors.ustc.edu.cn/nix-channels/store"
@@ -41,9 +29,11 @@
   # Optimize Storage
   nix.gc = {
     automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 1w";
+    dates     = "weekly";
+    options   = "--delete-older-than 1w";
   };
+
+  programs.ccache.enable = true;
 
   nixpkgs.overlays = [
     (self: super: {
@@ -74,8 +64,6 @@
     })
   ];
 
-  programs.ccache.enable = true;
-
   programs.direnv = {
     enable = true;
     settings = {
@@ -84,20 +72,6 @@
   };
 
   programs.nix-ld.enable = true;
-
-  services.emacs = {
-    enable = true;
-    package = pkgs.emacs;
-  };
-
-  services.postgresql = {
-    enable = true;
-    ensureDatabases = [ "mydatabase" "course" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-    '';
-  };
 
   services.openssh = {
     enable = true;
@@ -112,8 +86,7 @@
   networking.firewall.allowedTCPPorts = [ 2222 ];
 
   users.users.nixos = {
-    openssh.authorizedKeys.keys = [
-    ];
+    openssh.authorizedKeys.keys = [ ];
   };
 
   services.fail2ban.enable = true;
@@ -141,4 +114,16 @@
 
   # Cross compilation
   boot.binfmt.emulatedSystems = [ "riscv64-linux" "loongarch64-linux" ];
+
+  wsl.enable           = true;
+  wsl.defaultUser      = "nixos";
+  wsl.interop.register = true;
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It's perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "24.11"; # Did you read the comment?
 }

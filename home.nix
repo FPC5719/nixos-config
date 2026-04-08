@@ -4,10 +4,6 @@
   home.username      = "nixos";
   home.homeDirectory = "/home/nixos";
 
-  # home.file.".xxx".text = ''
-  #     xxx
-  # '';
-
   home.packages =
     let
       myTex = (pkgs.texlive.combine {
@@ -32,6 +28,7 @@
       # Tex related
       myTex mpage ghostscript
       # Utils
+      xclip
       fish neofetch nnn htop tmux
       zip unzip xz
       file which tree
@@ -88,6 +85,29 @@
     bind o select-pane -t :.+
     '';
   };
+
+  programs.emacs = {
+    enable        = true;
+    package       = pkgs.emacs;
+    extraPackages = epkgs: with epkgs; [
+      use-package
+      ivy counsel swiper amx company
+      lsp-mode lsp-ivy lsp-haskell
+      projectile counsel-projectile
+      nix-mode haskell-mode scala-mode
+      auctex verilog-mode
+      direnv xclip esh-autosuggest mwim
+      dash magit-section
+    ];
+  };
+
+  services.emacs = {
+    enable = true;
+  };
+  
+  home.file.".emacs.d/init.el".source = ./emacs/init.el;
+  home.file.".emacs.d/lisp".source    = ./emacs/lisp;
+
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
