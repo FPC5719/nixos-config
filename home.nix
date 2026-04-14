@@ -18,12 +18,12 @@
     in ( with pkgs.haskell.packages.ghc910; [
       ghc cabal-install hasktags haskell-language-server
     ]) ++ ( with pkgs; [
-      # Compiler
+      # Dev Environment
       myPython uv
       koka
       verilator iverilog
       nodejs
-      # Dev Environment
+      jdk jre scala_2_13 mill metals
       qemu ninja bear cloc
       # Tex related
       myTex mpage ghostscript
@@ -92,7 +92,7 @@
     extraPackages = epkgs: with epkgs; [
       use-package
       ivy counsel swiper amx company
-      lsp-mode lsp-ivy lsp-haskell
+      lsp-mode lsp-ivy lsp-haskell lsp-metals
       projectile counsel-projectile
       nix-mode haskell-mode scala-mode
       auctex verilog-mode

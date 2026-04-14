@@ -1,5 +1,21 @@
 ;; Language highlights and toolchains
 
+(defun my-c-mode-hook ()
+  (add-hook
+   'hack-local-variables-hook
+   (lambda ()
+     (message "Enter C hook with ENV")
+     (let ((cc-path  (if (boundp 'cc-env)  cc-env  "/run/current-system/bin/gcc"))
+           (cxx-path (if (boundp 'cxx-env) cxx-env "/run/current-system/bin/g++")))
+       (message "cc-path: %s" cc-path)
+       (message "cxx-path: %s" cxx-path)
+       (require 'lsp-clangd)
+       (setq lsp-clients-clangd-args
+             (list "--header-insertion-decorators=0"
+                   (concat "--query-driver=" cc-path  "," cxx-path)))
+       (lsp-deferred)))
+   nil t))
+
 (use-package lsp-mode
   :defer t
   :init
@@ -7,7 +23,10 @@
 	lsp-file-watch-threshold 50)
   :hook
   (lsp-mode . lsp-enable-which-key-integration)
+  (c-mode . my-c-mode-hook)
+  (c++-mode . my-c-mode-hook)
   :config
+  (setq lsp-enable-on-type-formatting nil)
   (require 'lsp-clangd)
   (setq lsp-clients-clangd-executable "/run/current-system/sw/bin/clangd")
   :bind
@@ -33,28 +52,6 @@
 (use-package counsel-projectile
   :after (projectile)
   :init (counsel-projectile-mode))
-
-(defun my-c-mode-hook ()
-  (add-hook
-   'hack-local-variables-hook
-   (lambda ()
-     (message "Enter C hook with ENV")
-     (let ((cc-path  (if (boundp 'cc-env)  cc-env  "/run/current-system/bin/gcc"))
-           (cxx-path (if (boundp 'cxx-env) cxx-env "/run/current-system/bin/g++")))
-       (message "cc-path: %s" cc-path)
-       (message "cxx-path: %s" cxx-path)
-       (require 'lsp-clangd)
-       (setq lsp-clients-clangd-args
-             (list "--header-insertion-decorators=0"
-                   (concat "--query-driver=" cc-path  "," cxx-path)))
-       (lsp-deferred)))
-   nil t))
-
-(use-package c++-mode
-  :hook
-  (c-mode . my-c-mode-hook)
-  (c++-mode . my-c-mode-hook))
-
 
 (use-package verilog-mode
   :defer t
@@ -104,10 +101,20 @@
   )
 ;; Haskell END
 
+;; Scala
+(use-package lsp-metals
+  :after lsp-mode
+  :config
+  (lsp-register-custom-settings
+   '(("metals.preferredBuildTool" "mill")
+     ("metals.serverProperties" ("-J-Xmx4G")))))
+
 (use-package scala-mode
   :defer t
-  :interpreter
-  ("scala" . scala-mode))
+  :mode "\\.scala\\'"
+  :interpreter ("scala" . scala-mode)
+  :hook (scala-mode . lsp-deferred))
+;; Scala END
 
 ;; Lean
 (use-package dash
