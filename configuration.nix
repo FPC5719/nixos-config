@@ -93,6 +93,16 @@
 
   services.vscode-server.enable = true;
 
+  virtualisation.docker = {
+    enable = true;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
+  };
+
+  users.users.nixos.extraGroups = [ "docker" ];
+
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
