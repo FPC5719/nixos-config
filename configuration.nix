@@ -12,7 +12,7 @@
     # include NixOS-WSL modules
     <nixos-wsl/modules>
     # VS Code server
-    (fetchTarball "https://github.com/nix-community/nixos-vscode-server/tarball/master")
+    # (fetchTarball "https://github.com/nix-community/nixos-vscode-server/tarball/master")
   ];
 
   nix.settings = {
@@ -91,7 +91,7 @@
 
   services.fail2ban.enable = true;
 
-  services.vscode-server.enable = true;
+  # services.vscode-server.enable = true;
 
   virtualisation.docker = {
     enable = true;

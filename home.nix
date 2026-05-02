@@ -75,7 +75,7 @@
     shell        = "${pkgs.fish}/bin/fish";
     shortcut     = "q";
     secureSocket = false;
-    mouse        = true;
+    mouse        = false;
     clock24      = true;
     escapeTime   = 0;
     extraConfig  = ''
